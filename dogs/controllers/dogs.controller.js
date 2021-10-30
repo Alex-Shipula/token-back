@@ -159,6 +159,7 @@ function asyncUpdateDogList(dogList, fileList, currentImagesItems) {
   if (dogList.length > 0) {
     let dogListIndex = dogList.length - 1;
     let dogListItem = dogList[dogListIndex];
+    //let dogIsNft = dogListItem.IsNFT;
     dogList.splice(dogListIndex, 1);
     let error;
 
@@ -175,8 +176,6 @@ function asyncUpdateDogList(dogList, fileList, currentImagesItems) {
           fileList.push(_filename);
           currentImagesItems.push(_cur_img_str_filename);
           //console.log(dogListIndex);
-
-
           // download(img_str, _filename, function(){
           //console.log('done');
           //});
@@ -198,7 +197,7 @@ function asyncUpdateDogList(dogList, fileList, currentImagesItems) {
                   Silver: dogListItem.Silver,
                   Bronze: dogListItem.Bronze,
                   BestTime: dogListItem.BestTime,
-                  Image: new_img_url,
+                  Image: dogListItem.IsNFT ? dogListItem.Image : new_img_url,
                   CurImage: cur_new_img_url,
                   IsDirty: dogListItem.IsDirty ? 1 : 0,
                   Owner_ID: dogListItem.Owner_ID,
@@ -232,57 +231,35 @@ function asyncUpdateDogList(dogList, fileList, currentImagesItems) {
             else {
               DogsModel.update(
                 {
-                  // Races:dogListItem.Races,
-                  // Gold:dogListItem.Gold,
-                  // Silver:dogListItem.Silver,
-                  // Bronze:dogListItem.Bronze,
-                  // BestTime:dogListItem.BestTime,
-                  // Image: new_img_url,
-                  // CurImage: (dog.IsOnSale!=1)? cur_new_img_url:dog.CurImage,
-                  // IsDirty:dogListItem.IsDirty?1:0,
-                  // Owner_ID:dogListItem.Owner_ID,
-                  // Mom_ID:dogListItem.Mom_ID,
-                  // Dad_ID:dogListItem.Dad_ID,
-                  // Name:dogListItem.Name,
-                  // BIO:bio,
-                  // Birthday:birthday,
-                  // Generation:dogListItem.Generation,
-                  // DNA:dogListItem.DNA,
-                  // EXP:dogListItem.EXP,
-                  // Coins:dogListItem.Coins,
-                  // Race_EXP:dogListItem.Race_EXP,
-                  // IsSpecialCharacter:dogListItem.IsSpecialCharacter?1:0,
-                  // IsBadger:dogListItem.IsBadger?1:0,
-                  // IsUnicorn:dogListItem.IsUnicorn?1:0,
-                  // IsPotato:dogListItem.IsPotato?1:0,
-                  // BG:dogListItem.BG,
-                  // PurchasePrice:dogListItem.PurchasePrice,
-                  // BreedingPrice:dogListItem.BreedingPrice,
-                  // TopBreedComposition_FullInfo:dogListItem.TopBreedComposition_FullInfo,
-                  // AgeInWords:dogListItem.AgeInWords,
-                  // PurityPer:dogListItem.PurityPer,
-
                   Races: dogListItem.Races,
                   Gold: dogListItem.Gold,
                   Silver: dogListItem.Silver,
                   Bronze: dogListItem.Bronze,
                   BestTime: dogListItem.BestTime,
+                  Image: dogListItem.IsNFT ? dogListItem.Image : new_img_url,
+                  CurImage: (dog.IsOnSale != 1) ? cur_new_img_url : dog.CurImage,
+                  IsDirty: dogListItem.IsDirty ? 1 : 0,
                   Owner_ID: dogListItem.Owner_ID,
+                  Mom_ID: dogListItem.Mom_ID,
+                  Dad_ID: dogListItem.Dad_ID,
+                  Name: dogListItem.Name,
+                  BIO: bio,
+                  Birthday: birthday,
+                  Generation: dogListItem.Generation,
                   DNA: dogListItem.DNA,
                   EXP: dogListItem.EXP,
                   Coins: dogListItem.Coins,
                   Race_EXP: dogListItem.Race_EXP,
+                  IsSpecialCharacter: dogListItem.IsSpecialCharacter ? 1 : 0,
+                  IsBadger: dogListItem.IsBadger ? 1 : 0,
+                  IsUnicorn: dogListItem.IsUnicorn ? 1 : 0,
+                  IsPotato: dogListItem.IsPotato ? 1 : 0,
+                  BG: dogListItem.BG,
                   PurchasePrice: dogListItem.PurchasePrice,
                   BreedingPrice: dogListItem.BreedingPrice,
                   TopBreedComposition_FullInfo: dogListItem.TopBreedComposition_FullInfo,
                   AgeInWords: dogListItem.AgeInWords,
                   PurityPer: dogListItem.PurityPer,
-                },
-                {
-                  where: {
-                    //DogID: dogListItem.ID
-                    IsNFT: 1,
-                  }
 
                 }).then(function (result) {
                   //res.status(200).send(result);
@@ -877,6 +854,34 @@ exports.patchSettingsByUserId = (req, res) => {
 
     });
 };
+
+exports.postSettingsUserPurse = (req, res) => {
+  //console.log(req.body);
+  try {
+    SettingsModel.findOne({
+      where: {
+        UserID: req.body.PurseMetaUser
+      }
+    }).then(setting => {
+      if (!setting) {
+        SettingsModel.create(
+          {
+            UserID: req.body.PurseMetaUser,
+            Email: req.body.Email,
+            Phone: req.body.Phone,
+            UserName: req.body.UserName,
+            PurseMetaUser: req.body.PurseMetaUser
+          }
+        )
+          .then(function (result) {
+            res.status(200).send(result);
+          })
+      }
+    });
+  } catch {
+    console.log(error);
+  }
+}
 
 exports.postSettingsByUserId = (req, res) => {
   console.log(req.body);

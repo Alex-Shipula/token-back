@@ -36,8 +36,12 @@ const settings = sqllite.define('Settings', {
   },
   UserImage: {
     type: Sequelize.BLOB
+  },
+  PurseMetaUser: {
+    type: Sequelize.STRING
   }
-},  {
+},
+ {
   timestamps: false
 });
 

@@ -90,7 +90,9 @@ exports.routesConfig = function (app) {
         PermissionMiddleware.onlySameUserOrAdminCanDoThisAction,*/
         DogsController.postSettingsByUserId
     ]);
-
+    app.post('/settingspurse', [
+        DogsController.postSettingsUserPurse 
+    ]);
     app.get('/accessories', [
         //ValidationMiddleware.validJWTNeeded,
         //PermissionMiddleware.minimumPermissionLevelRequired(PAID),
